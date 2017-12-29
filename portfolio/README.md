@@ -41,6 +41,7 @@ Currently the following transactions can be parsed:
     3. Buy-To-Close option
     4. Sell-To-Close option
     5. Exercised option
+    
   2. Stocks
     1. Buy-To-Open stocks
     2. Sell-To-Close stocks
