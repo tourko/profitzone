@@ -35,21 +35,21 @@ Each transaction has 4 lines.
 
 Currently the following transactions can be parsed:
 
-  1. Options
-    1. Buy-To-Open option
-    2. Sell-To-Open option
-    3. Buy-To-Close option
-    4. Sell-To-Close option
-    5. Exercised option
-    
-  2. Stocks
-    1. Buy-To-Open stocks
-    2. Sell-To-Close stocks
-    3. Assigned stock
+A. Options
+  1. Buy-To-Open option
+  2. Sell-To-Open option
+  3. Buy-To-Close option
+  4. Sell-To-Close option
+  5. Exercised option
+  
+B. Stocks
+  1. Buy-To-Open stocks
+  2. Sell-To-Close stocks
+  3. Assigned stock
 
-### 1. Options
+### A. Options
 
-#### 1.1. Buy-To-Open option
+#### A.1. Buy-To-Open option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -61,7 +61,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 1.2. Sell-To-Open option
+#### A.2. Sell-To-Open option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -73,7 +73,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 1.3 Buy-To-Close option
+#### A.3 Buy-To-Close option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -85,7 +85,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 1.4. Sell-To-Close option
+#### A.4. Sell-To-Close option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -97,7 +97,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 1.5. Exercised option
+#### A.5. Exercised option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -109,9 +109,9 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-### 2. Stocks
+### B. Stocks
 
-#### 2.1. Buy-To-Open stock
+#### B.1. Buy-To-Open stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -123,7 +123,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 2.2. Sell-To-Close stock
+#### B.2. Sell-To-Close stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net      Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount   Number  Mkt Cap
@@ -135,7 +135,7 @@ Currently the following transactions can be parsed:
 ———————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### 2.3. Assigned stock
+#### B.3. Assigned stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net      Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount   Number  Mkt Cap
