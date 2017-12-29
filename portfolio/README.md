@@ -35,20 +35,20 @@ Each transaction has 4 lines.
 
 Currently the following transactions can be parsed:
 
-  A) Options
+  1. Options
     1. Buy-To-Open option
     2. Sell-To-Open option
     3. Buy-To-Close option
     4. Sell-To-Close option
     5. Exercised option
-  B) Stocks
+  2. Stocks
     1. Buy-To-Open stocks
     2. Sell-To-Close stocks
     3. Assigned stock
 
-### A. Options
+### 1. Options
 
-#### A.1. Buy-To-Open option
+#### 1.1. Buy-To-Open option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -60,7 +60,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### A.2. Sell-To-Open option
+#### 1.2. Sell-To-Open option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -72,7 +72,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### A.3 Buy-To-Close option
+#### 1.3 Buy-To-Close option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -84,7 +84,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### A.4. Sell-To-Close option
+#### 1.4. Sell-To-Close option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -96,7 +96,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### A.5. Exercised option
+#### 1.5. Exercised option
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -108,9 +108,9 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-### B. Stocks
+### 2. Stocks
 
-#### B.1. Buy-To-Open stock
+#### 2.1. Buy-To-Open stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net    Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount Number  Mkt Cap
@@ -122,7 +122,7 @@ Currently the following transactions can be parsed:
 —————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### B.2. Sell-To-Close stock
+#### 2.2. Sell-To-Close stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net      Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount   Number  Mkt Cap
@@ -134,7 +134,7 @@ Currently the following transactions can be parsed:
 ———————————————————————————————————————————————————————————————————————————————————————————————————————————————
 ```
 
-#### B.3. Assigned stock
+#### 2.3. Assigned stock
 ```
     Acct  B/S Trade     Settle                                      Tran  Add’l Tag    Net      Trade
     Type      Date      Date     QTY SYM Price      Principal Comm  Fee   Fees  Number Amount   Number  Mkt Cap
