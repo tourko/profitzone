@@ -74,9 +74,8 @@ realized <- bind_rows(closed, expired) %>%
   group_by(symbol) %>% 
   summarise(realized = sum(profit_loss))
 
-# Calculate unrealized P/L
-unrealized <- non_closed %>%
-  anti_join(expired_options, by = "cusip") %>% 
+# Calculate unrealized P/L, which is P/L of opened positions
+unrealized <-  anti_join(non_closed, expired_options, by = "cusip") %>% 
   group_by(symbol) %>% 
   summarise(unrealized = sum(profit_loss))
 

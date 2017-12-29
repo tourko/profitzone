@@ -31,7 +31,7 @@ read_confirmation <- function(f) {
   
   # Extract lines from the document
   lines <- process_document(doc)
-  
+
   # Extract transactions from the lines
   transactions <- transaction_blocks %>% map_dfr(~ parse_transaction_lines(lines, .x))
 
