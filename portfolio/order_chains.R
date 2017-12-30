@@ -127,5 +127,7 @@ chained_orders <- orders %>%
   # Join orders with order_chains
   inner_join(order_chain, by = "order_id") %>% 
   # Put chain_id column in the front
-  select(chain_id, everything())
+  select(chain_id, everything()) %>% 
+  # Sort by chain_id
+  arrange(chain_id)
 
