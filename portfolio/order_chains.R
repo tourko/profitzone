@@ -124,7 +124,7 @@ mutate(ROLL = CLOSE & OPEN, OPEN = xor(OPEN, ROLL), CLOSE = xor(CLOSE, ROLL)) %>
 # ......      ...     ...     ...     ...     ...    ...  
 m <- xtabs(~ order_id + cusip, data = orders)
 
-order_chain <-
+orders <-
   # Build a list of matrixes for the related orders:
   #
   # [[1]]
@@ -154,6 +154,8 @@ order_chain <-
   # R00001      1
   # R00004      1
   #
+  # ...
+  #
   # Itterate through the rows of the contigency matrix.
   # Use index for the rows, so that we can get a row as matrix rather than as a vector.
   1:nrow(m) %>% map(function(i) {
@@ -167,15 +169,15 @@ order_chain <-
       r <- m[               , colSums(r) != 0, drop = FALSE]
       # Get rows (in the selected column(s)), which contain at least one non-0 value 
       r <- m[rowSums(r) != 0,                , drop = FALSE]
-      # Get number of rows
+      # Get number of rows found
       k = nrow(r)
       # If number of rows increased compared to the previous itteration,
       # then we found new relations.
       if (k > n) {
-        # Repeat the loop again and see if we find more rows (orders).
+        # Update row count and repeat the loop again.
         n = k
       } else {
-        # No more rows found, hence we already have all related rows (orders)
+        # No more rows found, hence we already found all related rows (i.e. orders).
         break
       }
     }
@@ -202,18 +204,19 @@ order_chain <-
   # 2   R00040   C00002
   # 3   R00057   C00002
   # 4   R00088   C00002
-  # 
-  # order_id comes from the row names of the matrixes and
-  # chain_id is based on the index of the element in the list.
   #
-  # Finally, merge all elements in the list into a single tibble by binding the rows.
-  map2_dfr(seq_along(.), ~ tibble(order_id = rownames(.x), chain_id = str_c("C", str_pad(.y, 5, pad = "0"))))
-
-# Add chain_id to the orders data frame
-chained_orders <- orders %>% 
-  # Join orders with order_chains
-  inner_join(order_chain, by = "order_id") %>% 
+  # ...
+  #
+  # "order_id" comes from the row names of the matrixes and
+  # "chain_id" is based on the position of the matrixes in the list.
+  # 
+  # Function inside map2_dfr() does all the above and then merges
+  # all tibbles in the list into a single tibble by binding the rows together.
+  map2_dfr(seq_along(.), ~ tibble(order_id = rownames(.x), chain_id = str_c("C", str_pad(.y, 5, pad = "0")))) %>% 
+  # Add "chain_id" to "orders" dataframe by joining the two
+  inner_join(orders, by = "order_id") %>% 
   # Put chain_id column in the front
   select(chain_id, everything()) %>% 
   # Sort by chain_id
   arrange(chain_id)
+  
