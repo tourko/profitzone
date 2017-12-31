@@ -108,6 +108,35 @@ mutate(ROLL = CLOSE & OPEN, OPEN = xor(OPEN, ROLL), CLOSE = xor(CLOSE, ROLL)) %>
   select(order_id, trade_date, order_type, everything())
 
 
+#
+# Calculate credit/debit, commissions and fees for each order
+#
+orders <- orders %>%
+  # Add "credit_debit" variable
+  mutate(credit_debit =
+           # Itterate through the transactions in a given order
+           orders$transactions %>%
+           # Sum up principles multiplied by either -1 or 1 depending on whether it is BUY or SELL transaction
+           map_dbl( ~ sum(.$principal * if_else(.$buy_sell == "BUY", -1, 1) ) )
+  ) %>% 
+  # Add "commissions" variable
+  mutate(commissions =
+           # Itterate through the transactions in a given order
+           orders$transactions %>%
+           # Sum up commission
+           map_dbl( ~ -sum(.$commission) )
+  ) %>% 
+  # Add "fees" variable
+  mutate(fees =
+           # Itterate through the transactions in a given order
+           orders$transactions %>%
+           # Sum up transaction and additional fee
+           map_dbl( ~ -sum(.$transaction_fee + .$additional_fee) )
+  ) %>% 
+  # Reorder columns
+  select(order_id, trade_date, order_type, symbol, credit_debit:fees, transactions)
+
+
 
 #
 # Chain orders by CUSIPs. If an instrument with a given CUSIP is found in diffrent orders,
