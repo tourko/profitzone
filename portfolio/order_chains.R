@@ -13,16 +13,14 @@ transactions <- readRDS("transactions.rds")
 # for the same symbol and with the same first letter for the tag_number.
 #
 orders <- transactions %>% 
-  # Get the first letter of the tag_number
+  # Get the first letter of the "tag_number"
   mutate(tag_letter = str_sub(tag_number, 1, 1)) %>% 
-  # "Wrap" transactions by trade_date, symbol and the first letter of the tag_number
+  # "Wrap" transactions by "trade_date", "symbol" and the first letter of the "tag_number"
   nest(-trade_date, -symbol, -tag_letter, .key = "transactions") %>% 
-  # Add order_id
+  # Add "order_id" column
   mutate(order_id = str_c("R", str_pad(row_number(), 5, pad = "0"))) %>% 
-  # "Unwrap" transactions
-  unnest() %>% 
-  # Put "order_id" in front folowed by transactions columns
-  select(order_id, one_of(colnames(transactions)))
+  # Put "order_id" in front and drop "tag_letter"
+  select(order_id, everything(), -tag_letter)
 
 #
 # Classify orders as either OPEN, CLOSE or ROLL.
@@ -31,7 +29,9 @@ orders <- transactions %>%
 # If all transactions in an order are CLOSE, then it is a CLOSE order.
 # If there is a mix of OPEN and CLOSE transactions in an order, then it is a ROLL order.
 
-orders <-
+orders <- orders %>%
+  # "Unwrap" transactions, because we would need "open_close" variable from the transactions.
+  unnest(transactions) %>%
   # Create a contigency matrix that shows relations between orders and open_close field of the transactions.
   # Rows contain order_id, columns contain open_close:
   #          open_close
@@ -42,7 +42,7 @@ orders <-
   # R00004    0     1
   # R00005    2     0
   # ......   ...   ...
-  xtabs(~ order_id + open_close, data = orders) %>%
+  xtabs(~ order_id + open_close, data = .) %>%
   # Convert to a tibble:
   # A tibble: 332 x 3
   #   order_id open_close n_legs
@@ -107,13 +107,15 @@ mutate(ROLL = CLOSE & OPEN, OPEN = xor(OPEN, ROLL), CLOSE = xor(CLOSE, ROLL)) %>
   # Put "order_type" column after "trade_date"
   select(order_id, trade_date, order_type, everything())
 
+
+
 #
 # Chain orders by CUSIPs. If an instrument with a given CUSIP is found in diffrent orders,
 # then these orders must be related and hence has to be chained together.
 #
 
 # Create a contigency matrix that shows relations between orders and CUSIPs.
-# Rows contain order_id, columns contain cusip:
+# Rows contain "order_id", columns contain "cusip":
 #          cusip
 # order_id 369604103 8BKQXT2 8BRRSQ6 8BRTKX9 8BRTNB5 ...
 # R00001       0       0       0       0       0     ...
@@ -122,10 +124,14 @@ mutate(ROLL = CLOSE & OPEN, OPEN = xor(OPEN, ROLL), CLOSE = xor(CLOSE, ROLL)) %>
 # R00004       0       0       0       0       0     ...
 # R00005       0       0       0       0       0     ...
 # ......      ...     ...     ...     ...     ...    ...  
-m <- xtabs(~ order_id + cusip, data = orders)
+m <- orders %>% 
+  # "Unwrap" transactions, because we would need "cusip" variable from the transactions.
+  unnest(transactions) %>%
+  # Create the contigency matrix described above.
+  xtabs(~ order_id + cusip, data = .)
 
 orders <-
-  # Build a list of matrixes for the related orders:
+  # Build a list of matrixes. Each matrix only includes orders related via transaction CUSIPs:
   #
   # [[1]]
   #          cusip
