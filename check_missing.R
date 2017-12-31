@@ -4,7 +4,7 @@
 library(dplyr)
 library(tidyr)
 
-transactions <- readRDS("transactions.rds")
+transactions <- readRDS("tastyworks/transactions.rds")
 
 # Convert to a data frame with the OPENING and CLOSING quantities for each CUSIP
 #      cusip  OPEN CLOSE

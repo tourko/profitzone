@@ -1,6 +1,6 @@
 library(dplyr)
 
-transactions <- readRDS("transactions.rds")
+transactions <- readRDS("tastyworks/transactions.rds")
 
 # Get open and close quantities by stock and cusip.
 #   symbol   cusip open_qty close_qty

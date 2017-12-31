@@ -4,7 +4,7 @@ library(tidyr)
 library(stringr)
 
 # Read transactions
-transactions <- readRDS("transactions.rds")
+transactions <- readRDS("tastyworks/transactions.rds")
 
 #
 # Group transactions into orders and add "order_id".
