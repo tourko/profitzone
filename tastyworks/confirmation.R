@@ -33,20 +33,22 @@ read_confirmation <- function(f) {
   lines <- process_document(doc)
 
   # Extract transactions from the lines
-  transactions <- transaction_blocks %>% map_dfr(~ parse_transaction_lines(lines, .x))
-
-  # Sort by sequence, so that transaction appear
-  # in the same order as in the confrimation.
-  transactions <- transactions %>%
-    arrange(sequence) %>% 
-    # Drop sequence column
-    select(-sequence)
+  transactions <- transaction_blocks %>%
+    map(~ parse_transaction_lines(lines, .x)) %>% 
+    # Remove empty elements from the list
+    compact()
   
   # Calculate transactions total
   transactions_total <- transactions %>% 
-    summarise(
-      quantity = sum(if_else(buy_sell == "BUY", quantity, -quantity)),
-      net_amount = sum(if_else(buy_sell == "BUY", -net_amount, net_amount))) %>%
+    # Calculate totals for each transaction block
+    map_dfr(~ .x %>%
+          summarise(
+            quantity   = sum(quantity   * if_else(buy_sell == "BUY", 1L, -1L)),
+            net_amount = sum(net_amount * if_else(buy_sell == "BUY", -1,   1))
+          )
+    ) %>% 
+    # Calculate totals for all blocks
+    summarise(quantity = sum(quantity), net_amount = sum(net_amount)) %>% 
     # Summing introduces a rounding error, so we have to round the result
     # for the comparisson to work correctly
     mutate(net_amount = round(net_amount, 2))

@@ -228,7 +228,8 @@ transaction_blocks$stock = list(
         price:additional_fee,
         net_amount,
         cusip,
-        tag_number)
+        tag_number,
+        everything())
   }
 )
   
@@ -247,14 +248,36 @@ transaction_blocks$assigned = list(
     # Trailer:    A/E 9GMSJJ4 1 ASSIGNED
     line4 = START %R% "Trailer:" %R%
             SPC %R% "A/E" %R%
-            SPC %R% pattern$option_cusip_string %R%
-            SPC %R% DGT %R%
-            SPC %R% capture("ASSIGNED")                      # (13) ASSIGNED
+            SPC %R% capture(pattern$option_cusip_string) %R% # (13) CUSIP of the assigned option
+            SPC %R% capture(one_or_more(DGT)) %R%            # (14) Assigned quantity
+            SPC %R% capture("ASSIGNED")                      # (15) ASSIGNED
   ),
-  # Same token names as for stock transaction
-  token_names = transaction_blocks$stock$token_names,
-  # Same augment function as for stock transaction
-  augment = transaction_blocks$stock$augment
+  # Token names for assigned stock
+  token_names = c(
+    "buy_sell",         #  (1) BUY or SELL
+    "trade_date",       #  (2) Trade Date
+    "quantity",         #  (3) Quantity
+    "symbol",           #  (4) Symbol of the stock
+    "price",            #  (5) Price
+    "principal",        #  (6) Principal
+    "commission",       #  (7) Commission
+    "transaction_fee",  #  (8) Transaction fee
+    "additional_fee",   #  (9) Additional fee
+    "tag_number",       # (10) Tag number
+    "net_amount",       # (11) Net ammount
+    "cusip",            # (12) Stock CUSIP
+    "assigned_cusip",   # (13) CUSIP of the assigned option
+    "assigned_qty",     # (14) Assigned quantity
+    "reason"            # (15) UNSOLICITED
+  ),
+  # Augment function for assigned stock
+  augment = function(df) {
+    df %>%
+      # Apply the same augment function as to the stock
+      transaction_blocks$stock$augment() %>% 
+      # Convert "assigned_qty" to integer
+      mutate(assigned_qty = as.integer(df$assigned_qty))
+  }
 )
   
 transaction_blocks$exercised = list(
@@ -381,10 +404,12 @@ parse_transaction_lines <- function(lines, block) {
     # Augment transactions
     transactions <- block$augment(transactions)
     
-    # Add the numbers of the first lines for each transaction.
+    # Add the transaction_id based on the first lines for each transaction.
     # It will be used for sorting the transactions,
     # so that they appear in the same order as in the confrimation.
-    transactions <- transactions %>% mutate(sequence = first_transaction_lines)
+    transactions <- transactions %>%
+      mutate(transaction_id = str_c("T", str_pad(first_transaction_lines, 5, pad = "0"))) %>% 
+      select(transaction_id, everything())
   }
   
   return(transactions)
