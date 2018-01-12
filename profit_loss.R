@@ -1,6 +1,9 @@
 library(dplyr)
+library(purrr)
+library(tidyr)
+library(lubridate)
 
-transactions <- readRDS("tastyworks/transactions.rds")
+transactions <- readRDS("transactions.rds")
 
 # Get open and close quantities by stock and cusip.
 #   symbol   cusip open_qty close_qty
@@ -11,11 +14,11 @@ transactions <- readRDS("tastyworks/transactions.rds")
 # 4   AAPL 8KLVSQ0        1        -1
 # 5   AAPL 8KLVVP9        1        -1
 quantity <- transactions %>% 
-  mutate(quantity = quantity * if_else(buy_sell == "SELL", -1, 1)) %>%
-  select(symbol, cusip, open_close, quantity) %>% 
-  group_by(symbol, cusip, open_close) %>% 
+  mutate(quantity = quantity * if_else(action == "SELL", -1, 1)) %>%
+  select(symbol, cusip, position, quantity) %>% 
+  group_by(symbol, cusip, position) %>% 
   summarise(quantity = sum(quantity)) %>% 
-  spread(open_close, quantity, fill = 0) %>% 
+  spread(position, quantity, fill = 0) %>% 
   rename(open_qty = OPEN, close_qty = CLOSE)
 
 # Get open and close credit/debit by stock and cusip.
@@ -27,11 +30,11 @@ quantity <- transactions %>%
 # 4   AAPL 8KLVSQ0       -112          46
 # 5   AAPL 8KLVVP9        -66          10
 credit_debit <- transactions %>% 
-  mutate(credit_debit = principal * if_else(buy_sell == "BUY", -1, 1)) %>%
-  select(symbol, cusip, open_close, credit_debit) %>% 
-  group_by(symbol, cusip, open_close) %>% 
+  mutate(credit_debit = principal * if_else(action == "BUY", -1, 1)) %>%
+  select(symbol, cusip, position, credit_debit) %>% 
+  group_by(symbol, cusip, position) %>% 
   summarise(credit_debit = sum(credit_debit)) %>% 
-  spread(open_close, credit_debit, fill = 0) %>% 
+  spread(position, credit_debit, fill = 0) %>% 
   rename(open_cr_db = OPEN, close_cr_db = CLOSE)
 
 # Sum up quantities and credit/debit and merge into one data frame.
@@ -60,7 +63,7 @@ non_closed <- all %>%
 
 # Out of non-closed positions find cusips of the expired options
 expired_options <- transactions %>% 
-  filter(cusip %in% non_closed$cusip, open_close == "OPEN", expiration_date < today()) %>%
+  filter(cusip %in% non_closed$cusip, position == "OPEN", expiration_date < today()) %>%
   select(cusip)
 
 # Calculate P/L for the expired options.
